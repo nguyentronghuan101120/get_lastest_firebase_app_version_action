@@ -53,11 +53,11 @@ function getLatestRelease(accessToken) {
     request(options, (error, res, body) => {
         if (error) {
             return core.setFailed(`Something went wrong, make sure your service account has the "Firebase App Distribution Admin" role. ${error.message}`);
-        };
+        }
 
         if (!error && res.statusCode == 200) {
             setVersionOutput(body);
-        };
+        }
     });
 }
 
@@ -87,10 +87,12 @@ function setVersionOutput(body) {
     // Set outputs using environment files
     Object.entries(outputs).forEach(([key, value]) => {
         core.exportVariable(key, value);
+        core.setOutput(key, value); // Add this line to set the output
     });
 
     Object.entries(newOutputs).forEach(([key, value]) => {
         core.exportVariable(key, value);
+        core.setOutput(key, value); // Add this line to set the output
     });
 }
 
