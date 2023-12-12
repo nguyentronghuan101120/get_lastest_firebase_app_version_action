@@ -22,7 +22,7 @@ try {
         } else if (tokens.access_token === null) {
             core.setFailed('Provided service account does not have permission to generate access tokens');
         } else {
-            // Get latest release and parse it's version to the current and new version
+            // Get latest release and parse its version to the current and new version
             getLatestRelease(tokens.access_token);
         }
     });
@@ -68,17 +68,30 @@ function setVersionOutput(body) {
 
     console.log(`Current version: ${displayVersion}+${buildVersion}`);
 
-    core.setOutput('displayVersion', displayVersion);
-    core.setOutput('buildVersion', buildVersion);
-    core.setOutput('flutterVersionString', `${displayVersion}+${buildVersion}`);
+    const outputs = {
+        displayVersion: displayVersion,
+        buildVersion: buildVersion,
+        flutterVersionString: `${displayVersion}+${buildVersion}`
+    };
 
     const newDisplayVersion = incrementVersion(displayVersion);
     const newBuildVersion = parseInt(buildVersion) + 1;
     console.log(`New version: ${newDisplayVersion}+${newBuildVersion}`);
 
-    core.setOutput('newDisplayVersion', newDisplayVersion);
-    core.setOutput('newBuildVersion', newBuildVersion);
-    core.setOutput('newFlutterVersionString', `${newDisplayVersion}+${newBuildVersion}`);
+    const newOutputs = {
+        newDisplayVersion: newDisplayVersion,
+        newBuildVersion: newBuildVersion,
+        newFlutterVersionString: `${newDisplayVersion}+${newBuildVersion}`
+    };
+
+    // Set outputs using environment files
+    Object.entries(outputs).forEach(([key, value]) => {
+        core.exportVariable(key, value);
+    });
+
+    Object.entries(newOutputs).forEach(([key, value]) => {
+        core.exportVariable(key, value);
+    });
 }
 
 function incrementVersion(displayVersion) {
